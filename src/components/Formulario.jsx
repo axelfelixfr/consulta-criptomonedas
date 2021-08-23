@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useMoneda } from '../hooks/useMoneda';
 import { useCriptomoneda } from '../hooks/useCriptomoneda';
 import axios from 'axios';
+import { Error } from './Error';
 
 const Boton = styled.input`
   margin-top: 20px;
@@ -22,7 +23,9 @@ const Boton = styled.input`
   }
 `;
 
-export const Formulario = () => {
+export const Formulario = ({ enviarCotizacion }) => {
+  const [error, setError] = useState(false);
+
   // State del listado de criptomonedas
   const [criptomOptions, setCriptomOptions] = useState([]);
 
@@ -58,8 +61,27 @@ export const Formulario = () => {
     consultarAPI();
   }, []);
 
+  // Cuando se cotiza la moneda
+  const handleSubmit = e => {
+    e.preventDefault();
+    // Validación
+    if (moneda === '' || criptomoneda === '') {
+      setError(true);
+      return;
+    }
+
+    // Paso validacion
+    setError(false);
+
+    enviarCotizacion({
+      moneda,
+      criptomoneda
+    });
+  };
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
+      {error && <Error mensaje="Debes llenar ambos campos" />}
       <ComponentSelectMoneda />
 
       <ComponentSelectCripto />
