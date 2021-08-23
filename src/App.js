@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Cotizacion } from './components/Cotizacion';
 import { Formulario } from './components/Formulario';
+import { Spinner } from './components/Spinner';
 import imagen from './cryptomonedas.png';
 
 const Contenedor = styled.div`
@@ -44,25 +45,49 @@ function App() {
     criptomoneda: ''
   };
 
+  // State para guardar los datos (moneda, criptomoneda) que se envíen por el formulario
   const [cotizacion, setCotizacion] = useState(initialState);
 
+  // State para obtener los resultados de una cotización
   const [resultado, setResultado] = useState({});
 
+  // Loader mientras hace petición
+  const [loader, setLoader] = useState(false);
+
   useEffect(() => {
+    // Desestructuramos la cotizacion
     const { moneda, criptomoneda } = cotizacion;
+    // Si moneda o criptomoneda estan vacios que no retorne nada
     if (moneda === '' || criptomoneda === '') {
       return;
     }
 
     const cotizarCriptomoneda = async () => {
+      // Mandamos los datos de cotización
       const url = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${criptomoneda}&tsyms=${moneda}`;
+      // Usamos axios para obtener la data
       const { data } = await axios.get(url);
 
-      setResultado(data.DISPLAY[criptomoneda][moneda]);
+      // Mostrar spinner/loader
+      setLoader(true);
+
+      setTimeout(() => {
+        setLoader(false);
+        // Con "[]" sería de igual forma acceder a propiedades con "."
+        // Por ejemplo data.DISPLAY.BITCOIN.MXN == data.DISPLAY[BITCOIN][MXN]
+        setResultado(data.DISPLAY[criptomoneda][moneda]);
+      }, 3000); // Después de 3 segundos que oculte el loader y muestre el resultado de la cotización
     };
 
     cotizarCriptomoneda();
   }, [cotizacion]);
+
+  // Renderización condicional
+  const componente = loader ? (
+    <Spinner />
+  ) : (
+    <Cotizacion resultado={resultado} />
+  );
 
   return (
     <Contenedor>
@@ -74,7 +99,7 @@ function App() {
 
         <Formulario enviarCotizacion={setCotizacion} />
 
-        <Cotizacion resultado={resultado} />
+        {componente}
       </div>
     </Contenedor>
   );

@@ -23,8 +23,10 @@ const Precio = styled.p`
 `;
 
 export const Cotizacion = ({ resultado }) => {
+  // Si el objeto de resultado esta vacío que regrese nulo
   if (Object.keys(resultado).length === 0) return null;
 
+  // A continuación se muestran todas las propiedades del objeto
   return (
     <CotizacionDiv>
       <Precio>

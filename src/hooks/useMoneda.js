@@ -27,7 +27,9 @@ export const useMoneda = (label, initialState, options) => {
 
   const ComponentSelectMoneda = () => (
     <>
+      {/* Colocamos el label que se envíe al invocar el hook */}
       <Label htmlFor="moneda">{label}</Label>
+      {/* Obtenemos la seleccion de la opción con setOptionSelected  */}
       <Select
         onChange={e => setOptionSelected(e.target.value)}
         value={optionSelected}
@@ -36,6 +38,7 @@ export const useMoneda = (label, initialState, options) => {
         <option value="" disabled>
           Seleccione una opcion
         </option>
+        {/* Recorremos cada opción que se mande al invocar el hook */}
         {options.map(option => (
           <option key={option.id} value={option.codigo}>
             {option.nombre}
